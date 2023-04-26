@@ -151,7 +151,7 @@ app.get('/callback', (req, res) => {
           maxAge: 3600000, //cookie will expire in an hour
         });
 
-        res.redirect('http://localhost:8080');
+        res.redirect('http://localhost:8080/app');
 
         // axios
         //   .get('https://api.spotify.com/v1/me', {

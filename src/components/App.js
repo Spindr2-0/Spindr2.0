@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import MainPage from './mainPage';
 import Login from './login';
 import * as Spotify from './fetch';
+import { StateContext } from '../context/StateContext';
 
+const params = new URLSearchParams(window.location.search);
 
 function App() {
-
-  useEffect(() => {
-    const recs = Spotify.getRecommendations("pop").then(data => console.log(data));
-    console.log("cookies", recs);
-  }, []);
-
-
-  // A state that represents if user is logged in
-  const [loggedIn, setLoggedIn] = useState(false);
-  // Function that changes login status
-  const handleLoginClick = (e) => {
-    e.preventDefault();
-    setLoggedIn(!loggedIn);
-  }
+  console.log(params);
+  const { login } = useContext(StateContext);
+  
   // If user is logged in, return mainpage component
-  if (loggedIn) {
+  if (true) {
      return <MainPage />
-    }
-  return <Login handleLoginClick={handleLoginClick}/>  
+    }  
 }
 
 export default App;
