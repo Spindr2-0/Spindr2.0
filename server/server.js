@@ -116,7 +116,7 @@ app.get('/callback', (req, res) => {
         res.cookie('refresh_token', refresh_token, {
           maxAge: 3600000, //cookie will expire in an hour
         });
-
+        
         res.redirect('http://localhost:8080/app');
 
       } else {
