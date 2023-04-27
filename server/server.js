@@ -8,6 +8,8 @@ const cors = require('cors');
 //this allows you to access .env files to read data
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
+const userController = require('./controllers/userController.js');
+
 
 //had trouble finding the docs from spotify but found this and seems to work: https://github.com/thelinmichael/spotify-web-api-node
 // apparently this will allow us to make a spotify object with a method that sets the access token
@@ -97,6 +99,7 @@ app.get('/callback', (req, res) => {
       'Basic ' + new Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
     },
   })
+  
     .then((response) => {
       // console.log('TOKEN: ', response.data);
       if (response.status === 200) {
@@ -115,7 +118,32 @@ app.get('/callback', (req, res) => {
 
         res.cookie('refresh_token', refresh_token, {
           maxAge: 3600000, //cookie will expire in an hour
-        });
+        })
+        
+        // Make fetch to spotify api, store information received in database
+        axios.get('https://api.spotify.com/v1/me', {
+          headers: {
+            'Authorization': `Bearer ${access_token}`
+          }
+        })
+          .then(response => {
+            const userProfile = {
+              name: response.data.display_name,
+              id: response.data.id,
+              ext_urls: response.data.external_urls.spotify,
+              access_token, 
+              refresh_token
+            }
+            res.locals.userProfile = userProfile; //setting locals to profile info
+            //check our database:
+            // query user table for id 
+            userController.createUser(req, res);
+          
+        })
+        .catch(error => console.error(error))
+
+        // if user doesn't exist
+          // create user and insert their info 
 
         res.redirect('http://localhost:8080/app');
 
@@ -357,3 +385,54 @@ The refresh token is usually obtained along with the access token and can be use
 //     console.log(err);
 //   }
 // });
+
+
+
+
+
+
+// new 
+// axios
+        //   .get('https://api.spotify.com/v1/me', {
+        //     headers: {
+        //       Authorization: `${token_type} ${access_token}`,
+        //     },
+        //   })
+
+        //   .then((response) => {
+        //     //response using <pre> will display data received from spotify without linebreaks, whitespace
+        //     //axios stores data returned by requests in the data property of the response obj
+        //     //code below is to test whether we get the right response back from spotify
+        //     // res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+
+        //     res.redirect('http://localhost:3000') //once we successfully get token, redirect to main page
+        //   });
+        // fetch('https://api.spotify.com/v1/me', {
+        //   headers: {
+        //     'Authorization': `Bearer ${accessToken}`
+        //   }
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   const userProfile = {
+        //     name: data.display_name,
+        //     email: data.email,
+        //     profilePicture: data.images[0].url
+        //   }
+        //   // Save userProfile to your database
+        // })
+        // .catch(error => console.error(error))
+
+
+      // Data results:   // {
+  //   display_name: 'the BP',
+  //   external_urls: {
+  //     spotify: 'https://open.spotify.com/user/31j6yzdhnulqnrlniwvaolss4zlm'
+  //   },
+  //   followers: { href: null, total: 0 },
+  //   href: 'https://api.spotify.com/v1/users/31j6yzdhnulqnrlniwvaolss4zlm',
+  //   id: '31j6yzdhnulqnrlniwvaolss4zlm',
+  //   images: [],
+  //   type: 'user',
+  //   uri: 'spotify:user:31j6yzdhnulqnrlniwvaolss4zlm'
+  // }
