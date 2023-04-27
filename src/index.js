@@ -1,9 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from "react-router-dom";
+import { StateProvider } from "./context/StateContext";
 import App from './components/App';
 import './styles.css'
+import AppRouter from "./components/AppRouter";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ 
+const root = document.getElementById("appRouter");
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+createRoot(root).render(
+    <BrowserRouter>
+        <StateProvider>
+            <AppRouter/>
+        </StateProvider>
+    </BrowserRouter>
+)
+

@@ -117,7 +117,7 @@ app.get('/callback', (req, res) => {
           maxAge: 3600000, //cookie will expire in an hour
         });
 
-        res.redirect('http://localhost:8080');
+        res.redirect('http://localhost:8080/app');
 
       } else {
         //if not 200 response, server will give back what spotify is serving
