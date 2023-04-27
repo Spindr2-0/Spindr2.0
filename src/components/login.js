@@ -2,8 +2,9 @@ import React, { useContext }  from 'react';
 import { StateContext } from '../context/StateContext';
 
 export default function Login() {
-
   const {login, setLogin} = useContext(StateContext);
+  
+  setLogin(false);
   
   const handleLoginClick = (e) => {
     console.log('clicked');
