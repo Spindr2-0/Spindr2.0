@@ -157,10 +157,16 @@ app.get('/callback', (req, res) => {
     });
 });
 
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../src/index.html'));
 });
+
+// Route to grab user info and sent back to front end
+app.post('/user', userController.getUser,
+(req, res) => {
+  res.status(200).json(res.locals.user)
+}
+)
 
 // function that grabs song recs from Spotify and pushes them into an array
 // look into removing this from backend as it's being called on the frontend
@@ -213,6 +219,18 @@ app.post('/getSongRecs', (req, res) => {
     .catch((error) => {
       console.error('THIS IS THE ERROR: ', error);
     });
+});
+
+// global error handler
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: 'Express error handler caught unknown middleware error',
+    status: 400,
+    message: { err: 'An error occurred' },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
 });
 
 app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));
@@ -422,17 +440,3 @@ The refresh token is usually obtained along with the access token and can be use
         //   // Save userProfile to your database
         // })
         // .catch(error => console.error(error))
-
-
-      // Data results:   // {
-  //   display_name: 'the BP',
-  //   external_urls: {
-  //     spotify: 'https://open.spotify.com/user/31j6yzdhnulqnrlniwvaolss4zlm'
-  //   },
-  //   followers: { href: null, total: 0 },
-  //   href: 'https://api.spotify.com/v1/users/31j6yzdhnulqnrlniwvaolss4zlm',
-  //   id: '31j6yzdhnulqnrlniwvaolss4zlm',
-  //   images: [],
-  //   type: 'user',
-  //   uri: 'spotify:user:31j6yzdhnulqnrlniwvaolss4zlm'
-  // }
