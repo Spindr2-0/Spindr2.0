@@ -7,7 +7,7 @@ import { StateContext } from '../context/StateContext';
 const params = new URLSearchParams(window.location.search);
 
 function App() {
-  console.log(params);
+
   const { login } = useContext(StateContext);
   
   // If user is logged in, return mainpage component
